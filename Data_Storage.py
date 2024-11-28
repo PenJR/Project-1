@@ -11,13 +11,13 @@ class DataStorage:
             "Music_Library": [track.__dict__ for track in library.get_tracks()]
         }
         
-        with open('MusicData.json', 'w') as file:
+        with open('MusicLibrary.json', 'w') as file:
             json.dump(data, file)
     
     @staticmethod
     def load_music_library():
         try:
-            with open('MusicData.json', 'r') as file:
+            with open('MusicLibrary.json', 'r') as file:
                 data = json.load(file)
                 library = MusicLibrary()
 
@@ -39,13 +39,13 @@ class DataStorage:
             }
         }
         
-        with open('MusicData.json', 'w') as file:
+        with open('Playlists.json', 'w') as file:
             json.dump(data, file)
     
     @staticmethod
     def load_playlists():
         try:
-            with open('MusicData.json', 'r') as file:
+            with open('Playlists.json', 'r') as file:
                 data = json.load(file)
                 playlists = []
 
