@@ -7,8 +7,9 @@ class DataStorage:
     
     @staticmethod
     def save_music_library(library):
+        # Assume the input data is already a dictionary
         data = {
-            "Music_Library": [track.__dict__ for track in library.get_tracks()]
+            "Music_Library": [track for track in library.get_tracks()]
         }
         
         with open('MusicLibrary.json', 'w') as file:
@@ -22,6 +23,7 @@ class DataStorage:
                 library = MusicLibrary()
 
                 for track_data in data["Music_Library"]:
+                    # Assuming track_data is a dictionary already
                     track = Track(track_data["title"], track_data["artist"], track_data["duration"])
                     library.add_track(track)
                     
@@ -32,9 +34,10 @@ class DataStorage:
     
     @staticmethod
     def save_playlists(playlists):
+        # Assume the input data is already a dictionary
         data = {
             "Playlists": {
-                playlist.name: [track.__dict__ for track in playlist.get_tracks()]
+                playlist.name: [track for track in playlist.get_tracks()]
                 for playlist in playlists
             }
         }
@@ -53,6 +56,7 @@ class DataStorage:
                     playlist = Playlist(playlist_name)
                     
                     for track_data in track_data_list:
+                        # Assuming track_data is a dictionary already
                         track = Track(track_data["title"], track_data["artist"], track_data["duration"])
                         playlist.add_track(track)
                     
@@ -73,3 +77,4 @@ class DataStorage:
         library = DataStorage.load_music_library()
         playlists = DataStorage.load_playlists()
         return library, playlists
+
