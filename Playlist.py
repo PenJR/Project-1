@@ -48,3 +48,73 @@ class Playlist:
         mins = self.total_duration[0]
         secs = self.total_duration[1]
         return f"{mins:02}:{secs:02}"
+
+
+    def save_playlist(self):
+        """Save the playlist to a file."""
+        try:
+           
+            try:
+                with open("Playlist.txt", "r") as f:
+                    lines = f.readlines()
+            except FileNotFoundError:
+                lines = []
+
+           
+            data = {}
+            for line in lines:
+                key, value = line.strip().split(":", 1)
+                data[key] = eval(value.strip())
+
+            data[self.name] = {
+                "Playlist Name": self.name,
+                "Total Duration": self.total_duration,
+                "Tracks": [track.to_dict() for track in self.tracks]
+            }
+
+           
+            with open("Playlist.txt", "w") as f:
+                for key, value in data.items():
+                    f.write(f"{key}: {value}\n")
+
+            print(f"Playlist '{self.name}' saved successfully.")
+
+        except Exception as e:
+            print(f"Error saving playlist: {e}")
+
+    @staticmethod
+    def load_playlist(name: str):
+        """Load a playlist by name from a file."""
+        try:
+           
+            with open("Playlist.txt", "r") as f:
+                lines = f.readlines()
+
+            data = {}
+            for line in lines:
+                key, value = line.strip().split(":", 1)
+                data[key] = eval(value.strip())
+
+            if name in data:
+                playlist_data = data[name]
+                playlist = Playlist(playlist_data["Playlist Name"])
+                playlist.total_duration = playlist_data["Total Duration"]
+                playlist.tracks = [Track.from_dict(track) for track in playlist_data["Tracks"]]
+                return playlist
+            else:
+                print(f"Playlist '{name}' not found.")
+                return None
+
+        except FileNotFoundError:
+            print("No saved playlists found.")
+            return None
+        except Exception as e:
+            print(f"Error loading playlist: {e}")
+            return None
+
+    def __str__(self):
+        """Return a string representation of the playlist."""
+        track_list = "\n".join([str(track) for track in self.tracks])
+        duration = f"{self.total_duration['minutes']} min {self.total_duration['seconds']} sec"
+        return f"Playlist: {self.name}\nTotal Duration: {duration}\nTracks:\n{track_list}"
+
