@@ -1,5 +1,7 @@
 import json 
 from Musiclib import MusicLibrary
+from Track import Track
+from Playlist import Playlist
 
 class DataStorage:
   @staticmethod
@@ -22,19 +24,21 @@ class DataStorage:
         Library = MusicLibrary()
         playlists = []
       
-            for track_data in data["music_library"]:
-                track = Track(track_data["title"], track_data["artist"], track_data["duration"])
-                library.add_track(track)
+        for track_data in data["music_library"]:
+            track = Track(track_data["title"], track_data["artist"], track_data["duration"])
+            Library.add_track(track)
                 
              
-            for playlist_name, track_data_list in data["playlists"].items():
-                playlist = Playlist(playlist_name)
-                for track_data in track_data_list:
-                     track = Track(track_data["title"], track_data["artist"], track_data["duration"])
-                    playlist.add_track(track)
-                playlists.append(playlist)
+        for playlist_name, track_data_list in data["playlists"].items():
+             playlist = Playlist(playlist_name)
 
-            return library, playlists
+        for track_data in track_data_list:
+                track = Track(track_data["title"], track_data["artist"], track_data["duration"])
+              # playlist.add_track(track)
+        playlists.append(playlist)
+
+        return Library, playlists
+      
     except FileNotFoundError:
         return MusicLibrary(), []
 
