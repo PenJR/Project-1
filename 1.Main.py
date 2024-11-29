@@ -1,22 +1,30 @@
-# MENUS dictionary 
+# MENUS dictionary
 MENUS = {
     "main": {
-        1: "Music Library",
-        2: "Playlists",
-        3: "Exit"
+        1: "Play Music",
+        2: "Music Library",
+        3: "Playlists",
+        4: "Exit"
     },
-    "Music library": {
+    "Play Music": {
+        1: "Play",
+        2: "Next",
+        3: "Previous",
+        4: "Toggle Repeat",
+        5: "Toggle Shuffle",
+        6: "Clear Queue",
+        7: "Exit"
+    },
+    "Music Library": {
         1: "Add Track",
         2: "View Tracks",
         3: "Search Tracks",
-        4: "Go back to main menu"
+        4: "Go Back to Main Menu"
     },
-    "playlist": {
+    "Playlist": {
         1: "Create Playlist",
         2: "View Playlists",
         3: "Add Track to Playlist",
-        4: "View Playlist",
-        5: "Go back to main menu"
-    },
+        4: "Go Back to Main Menu"
+    }
 }
-
