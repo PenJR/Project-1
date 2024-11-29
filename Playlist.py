@@ -1,3 +1,4 @@
+
 from Track import Track
 import json
 
@@ -86,44 +87,40 @@ class Playlist:
 
     @staticmethod
     def load_playlist(name, file_path="Playlist.json"):
-        """Load a playlist by name from a JSON file."""
-        try:
-            with open(file_path, "r") as f:
-                data = json.load(f)
-        except FileNotFoundError:
-            print(f"Error: The file '{file_path}' does not exist.")
-            return None
-        except json.JSONDecodeError:
-            print(f"Error: The file '{file_path}' contains invalid JSON.")
-            return None
+      """Load a playlist by name from a JSON file."""
+      try:
+        # Load the data from the JSON file
+        with open(file_path, "r") as f:
+            data = json.load(f)
+      except FileNotFoundError:
+        print(f"Error: The file '{file_path}' does not exist.")
+        return None
+      except json.JSONDecodeError:
+        print(f"Error: The file '{file_path}' contains invalid JSON.")
+        return None
 
-        if name in data:
-            playlist_data = data[name]
-            playlist = Playlist(playlist_data["Playlist Name"])
+      # Check if the playlist exists in the data
+      if name in data:
+        playlist_data = data[name]
+        playlist = Playlist(playlist_data["Playlist Name"])
 
-            # Deserialize tracks
-            playlist.tracks = [
-                Track.from_dict(track_data)
-                for track_data in playlist_data.get("Tracks", [])
-            ]
+        # Deserialize tracks
+        playlist.tracks = [
+            Track.from_dict(track_data)
+            for track_data in playlist_data.get("Tracks", [])
+        ]
 
-            # Parse total duration
-            try:
-                duration_parts = playlist_data["Total Duration"].split(" min ")
-                minutes = int(duration_parts[0])
-                seconds = int(duration_parts[1].replace(" sec", ""))
-                playlist.total_duration = [minutes, seconds]
-            except (IndexError, ValueError):
-                playlist.total_duration = [0, 0]
+        # Parse total duration (stored in seconds)
+        playlist.total_duration = playlist_data.get("Total Duration", 0)
 
-            print(f"Playlist '{name}' loaded successfully.")
-            return playlist
-        else:
-            print(f"Playlist '{name}' not found in '{file_path}'.")
-            return None
+        print(f"Playlist '{name}' loaded successfully.")
+        return playlist
+      else:
+        print(f"Playlist '{name}' not found in '{file_path}'.")
+        return None
 
     def __str__(self):
         """Return a string representation of the playlist."""
         track_list = "\n".join([str(track) for track in self.tracks])
-        duration = f"{self.total_duration[0]} min {self.total_duration[1]} sec"
+        duration = f"{self.total_duration['minutes']} min {self.total_duration['seconds']} sec"
         return f"Playlist: {self.name}\nTotal Duration: {duration}\nTracks:\n{track_list}"
