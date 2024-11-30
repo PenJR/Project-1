@@ -11,7 +11,7 @@ class DataStorage:
         try:
             with open("Music_Data.json", 'w') as json_file:
                 json.dump(music_data, json_file, indent=4)  
-            print(f"Playlist saved successfully to Music_Data}")
+            print(f"Playlist saved successfully to Music_Data)")
         except Exception as e:
             print(f"Error saving playlist: {e}")
 
