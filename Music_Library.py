@@ -39,7 +39,7 @@ class MusicLibrary:
         except ValueError:
             return False
 
-    def add_track(library):
+    def manage_add_track(library):
         """ Handles operations related to the music library, including CRUD for Tracks.
         """
             # Add Track
