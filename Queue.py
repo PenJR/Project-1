@@ -70,6 +70,9 @@ class Queue:
 
         print(f"Added {len(new_tracks)} tracks to the queue.")
     
+    def get_total_duration(self):
+        return f"{self.total_duration // 3600} hr {self.total_duration % 3600 // 60} min"
+
     def display_queue(self):
         if not self.list:
             print("The queue is empty.")
@@ -78,7 +81,7 @@ class Queue:
         total_pages = (len(self.list) + self.pagination - 1) // self.pagination
         current_page = self.current_index // self.pagination + 1 if self.current_index is not None else 1
 
-        print(f"Total Duration: {self.total_duration // 3600} hr {self.total_duration % 3600 // 60} min")
+        print(f"Total Duration: {self.get_total_duration()}")
         print(f"Shuffle: {'On' if self.shuffle else 'Off'} | Repeat: {'On' if self.repeat else 'Off'}")
         print(f"Page {current_page} of {total_pages}")
         print("Tracks:")
@@ -132,3 +135,5 @@ class Queue:
                 break
             else:
                 print("Invalid choice. Please try again.")
+
+
