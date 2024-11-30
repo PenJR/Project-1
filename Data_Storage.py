@@ -6,10 +6,10 @@ from Track import Track
 class DataStorage:
 #MUSIC Library and Playlist
     #SAVE
-    def save_music(playlist_data,filename):
+    def save_music(music_data,filename):
         try:
             with open(filename, 'w') as json_file:
-                json.dump(playlist_data, json_file, indent=4)  
+                json.dump(music_data, json_file, indent=4)  
             print(f"Playlist saved successfully to {filename}")
         except Exception as e:
             print(f"Error saving playlist: {e}")
