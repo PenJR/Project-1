@@ -1,4 +1,5 @@
 import random
+from Data_Storage import DataStorage
 
 class Queue:
     def __init__(self):
@@ -142,9 +143,9 @@ class Queue:
             elif choice == "6":
                 self.display_queue()
             elif choice == "7":
-                self.save_queue()
+                DataStorage.save_queue()
             elif choice == "8":
-                self.load_queue()
+                DataStorage.load_queue()
             elif choice == "9":
                 print("Exiting queue interface.")
                 break
