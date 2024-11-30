@@ -17,7 +17,7 @@ class MusicLibrary:
                 track.album == new_track.album and
                 track.artist == new_track.artist):
                 return True
-            return False
+        return False
      
     def display_tracks(self):
         if not self.tracks:
@@ -29,9 +29,11 @@ class MusicLibrary:
     def search_track(self, title):
         if not title:
             return []
-        else:
-            return [track for track in self.tracks if title.lower() in track.title.lower()]
-        
+        matches = [track for track in self.tracks if title.lower() in track.title.lower()]
+        if not matches:
+            print("No matching tracks found.")
+        return matches
+
     def validate_duration(self, duration):
         try:
             parts = duration.split(':')
