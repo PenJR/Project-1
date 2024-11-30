@@ -1,75 +1,74 @@
-from Track import Track
 import json
-
-class Playlist(Track):
+from Track import Track  
+from Queue import Queue
+class Playlist:
     def __init__(self, name):
+        """
+        Initializes a playlist with a given name and a Queue object to manage tracks.
+        """
         self.name = name
-        self.tracks = []
-        self.total_duration = 0
+        self.queue = Queue()  # Instance of Queue to manage the tracks
+        self.total_duration = 0  # Store the total duration as a single number (in seconds)
 
-    def save_playlist(self, file_path="Playlist.json"):
-      """Save the playlist to a JSON file."""
-      try:
-        with open(file_path, "r") as f:
-            data = json.load(f)
-      except FileNotFoundError:
-        data = {}
+    def place_track(self, track):
+        """
+        Adds a track to the playlist (via the Queue) if it is not already present.
+        Returns True if the track was placed successfully, False if it already exists.
+        """
+        if track in self.queue.tracks:
+            return False
+        self.queue.add_track(track)  # Adds the track to the Queue
+        return True
 
-      data[self.name] = {
-        "Playlist Name": self.name,
-        "Total Duration": f"{self.total_duration[0]} min {self.total_duration[1]} sec",
-        "Tracks": [
-            {
-                "Title": track.title,
-                "Artist": track.artist,
-                "Album": track.album,
-                "Duration": track.duration,
-            }
-            for track in self.tracks
-        ],
-      }
+    def search_and_place(self, library, title, selected_index):
+        """
+        Searches for a track by title in the library and places the selected one into the playlist.
+        Returns True if the track was placed successfully, False otherwise.
+        """
+        matches = [track for track in library if title.lower() in track.title.lower()]
+        if selected_index < 0 or selected_index >= len(matches):
+            return False
+        return self.place_track(matches[selected_index])
+
+    def update_playlist(self, new_tracks):
+        """
+        Adds multiple tracks to the playlist (via the Queue), avoiding duplicates.
+        Returns a list of tracks that were successfully added.
+        """
+        added_tracks = []
+        for track in new_tracks:
+            if self.place_track(track):  # Ensure no duplicates
+                added_tracks.append(track)
+        return added_tracks
+
+    def view_playlist(self):
+        """
+        Returns the list of tracks in the playlist.
+        """
+        return self.queue.tracks
+
+    def play_track(self, track):
+        """
+        Simulates playing a track from the playlist.
+        Returns True if the track exists in the playlist and can be played, False otherwise.
+        """
+        return track in self.queue.tracks
+
+    def play_all(self):
+        """
+        Simulates playing all tracks in the playlist in order.
+        Returns the list of tracks to be played.
+        """
+        return self.queue.tracks
+
+    def get_total_duration(self):
+        """
+        Returns the total duration of all tracks in the playlist (in seconds),
+        by calling the Queue's get_total_duration method.
+        """
+        return self.queue.get_total_duration()
 
 
-      try:
-        with open(file_path, "w") as f:
-            json.dump(data, f, indent=4)
-        print(f"Playlist '{self.name}' saved successfully.")
-      except Exception as e:
-        print(f"Error saving playlist: {e}")
-
-
-    @staticmethod
-    def load_playlist(name, file_path="Playlist.json"):
-      """Load a playlist by name from a JSON file."""
-      try:
-        with open(file_path, "r") as f:
-            data = json.load(f)
-      except FileNotFoundError:
-        print(f"Error: The file '{file_path}' does not exist.")
-        return None
-      except json.JSONDecodeError:
-        print(f"Error: The file '{file_path}' contains invalid JSON.")
-        return None
-
-
-      if name in data:
-        playlist_data = data[name]
-        playlist = Playlist(playlist_data["Playlist Name"])
-
-
-        playlist.tracks = [
-            Track.from_dict(track_data)
-            for track_data in playlist_data.get("Tracks", [])
-        ]
-
-   
-        playlist.total_duration = playlist_data.get("Total Duration", 0)
-
-        print(f"Playlist '{name}' loaded successfully.")
-        return playlist
-      else:
-        print(f"Playlist '{name}' not found in '{file_path}'.")
-        return None
 
     def __str__(self):
         """Return a string representation of the playlist."""

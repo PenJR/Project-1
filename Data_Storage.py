@@ -1,4 +1,5 @@
 import json
+import json
 from Track import Track
 from Playlist import Playlist
 from Music_Library import MusicLibrary
@@ -7,27 +8,27 @@ from Queue import Queue
 class DataStorage:
 #MUSIC Library and Playlist
     #SAVE
-    def save_music(music_data):
+    def save_music(music_data,filename="MusicLibrary.json"):
         try:
-            with open("Music_Data.json", 'w') as json_file:
+            with open(filename, 'w') as json_file:
                 json.dump(music_data, json_file, indent=4)  
-            print(f"Playlist saved successfully to Music_Data")
+            print(f"Playlist saved successfully to {filename}")
         except Exception as e:
             print(f"Error saving playlist: {e}")
 
     #LOAD
-    def load_music(self):
+    def load_music(filename = "MusicLibrary.json"):
         try:
           
-            with open("Music_Data.json", 'r') as json_file:
+            with open(filename, 'r') as json_file:
                 playlist_data = json.load(json_file)  
-            print(f"Playlist loaded successfully from Music_Data.json")
+            print(f"Playlist loaded successfully from {filename}")
             return playlist_data  
         except FileNotFoundError:
-            print(f"Error: The file Music_Data.json was not found.")
+            print(f"Error: The file {filename} was not found.")
             return None
         except json.JSONDecodeError:
-            print(f"Error: Failed to decode JSON in Music_Data.json, It might be corrupted or not properly formatted.")
+            print(f"Error: Failed to decode JSON in {filename}, It might be corrupted or not properly formatted.")
 
     def save_playlist(self, file_path="MusicLibrary.json"):
         try:
@@ -91,6 +92,7 @@ class DataStorage:
         print(f"Playlist '{name}' not found in '{file_path}'.")
         return None
 
+#QUEUE
 
     def save_queue(self):
         try:
@@ -125,3 +127,40 @@ class DataStorage:
             print("No saved queue found.")
         except json.JSONDecodeError:
             print("Error decoding JSON. Queue file might be corrupted.")   
+
+
+    def album_maker(track):
+        albums = {}
+
+        album_name = track.get('Album')
+        artist_name = track.get('Artist')
+
+        if album_name and artist_name:
+
+            album_key = (album_name, artist_name)
+
+            if album_key not in albums:
+                albums[album_key] = [track]
+
+            else:
+                albums[album_key].append(track)
+
+    def save_albums(albums, filename="MusicLibrary.json"):
+        with open(filename, 'w') as file:
+            # Convert dictionary to a JSON-compatible format
+            json.dump(albums, file, indent=4)
+        print(f"Albums saved to {filename}.")
+
+
+    def load_albums(filename="MusicLibrary.json"):
+        try:
+            with open(filename, 'r') as file:
+                albums = json.load(file)
+            print(f"Albums loaded from {filename}.")
+            return albums
+        except FileNotFoundError:
+            print(f"{filename} not found.")
+            return {}
+        except json.JSONDecodeError:
+            print(f"Error decoding JSON in {filename}.")
+            return {}
