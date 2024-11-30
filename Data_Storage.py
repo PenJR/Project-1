@@ -1,78 +1,81 @@
 import json
 from Track import Track
 from Playlist import Playlist
-from Music_Library import MusicLibrary
 
 class DataStorage:
-    @staticmethod
-    def save(library, playlists):
-        """Save music library and playlists to JSON."""
-        data = {
-            "Music_Library": [track.__dict__ for track in library.get_tracks()],
-            "Playlists": {playlist.name: [track.__dict__ for track in playlist.tracks] for playlist in playlists}
-        }
-        with open('MusicData.json', 'w') as file:
-            json.dump(data, file, indent=4) 
+    def __init__(self, filename="MusicLibrary.json"):
+        self.filename = filename
 
     @staticmethod
-    def load():
-        """Load music library and playlists from JSON."""
+    def save_music(library, playlists, filename="MusicLibrary.json"):
+        """Save the music library and playlists to a JSON file."""
         try:
-            with open('MusicData.json', 'r') as file:
-                data = json.load(file)
+            # Collecting music data (tracks and playlists)
+            music_data = {
+                "tracks": [
+                    {"title": track.title, "artist": track.artist, "album": track.album, "duration": track.duration}
+                    for track in library.get_tracks()
+                ],
+                "playlists": [
+                    {"name": playlist.name, "tracks": [{"title": track.title} for track in playlist.tracks]}
+                    for playlist in playlists
+                ]
+            }
+            with open(filename, 'w') as json_file:
+                json.dump(music_data, json_file, indent=4)
+            print(f"Music Library saved successfully to {filename}")
+        except Exception as e:
+            print(f"Error saving music library: {e}")
 
-                library = MusicLibrary()
-                playlists = []
+    @staticmethod
+    def load(library, playlists, filename="MusicLibrary.json"):
+        """Load music data (tracks and playlists) from a JSON file."""
+        try:
+            with open(filename, 'r') as json_file:
+                music_data = json.load(json_file)
 
-                # Load library tracks and ensure the duration format is correct
-                for track_data in data.get("Music_Library", []):
-                    try:
-                        # Ensure duration is in mm:ss format
-                        duration = track_data["duration"]
-                        if isinstance(duration, int):  # If duration is in seconds
-                            minutes = duration // 60
-                            seconds = duration % 60
-                            duration = f"{minutes:02}:{seconds:02}"
+            # Load tracks into the library
+            for track_data in music_data.get('tracks', []):
+                track = Track(track_data['title'], track_data['artist'], track_data['album'], track_data['duration'])
+                library.add_track(track)
 
-                        track = Track(
-                            title=track_data["title"],
-                            artist=track_data["artist"],
-                            album=track_data["album"],
-                            duration=duration
-                        )
-                        # Check for duplicates before adding to library
-                        library.add_track(track)
-                    except (ValueError, KeyError) as e:
-                        print(f"Skipping invalid track data: {track_data} - Error: {e}")
+            # Load playlists
+            for playlist_data in music_data.get('playlists', []):
+                playlist = Playlist(playlist_data['name'])
+                for track_data in playlist_data.get('tracks', []):
+                    track = library.search_track(track_data['title'])[0]  # assuming search_track returns a list of matching tracks
+                    playlist.add_track(track)
+                playlists.append(playlist)
 
-
-
-                for playlist_name, track_data_list in data.get("Playlists", {}).items():
-                    playlist = Playlist(playlist_name)
-                    for track_data in track_data_list:
-                        try:
-                            # Ensure duration is in mm:ss format
-                            duration = track_data["duration"]
-                            if isinstance(duration, int):  # If duration is in seconds
-                                minutes = duration // 60
-                                seconds = duration % 60
-                                duration = f"{minutes:02}:{seconds:02}"
-
-                            track = Track(
-                                title=track_data["title"],
-                                artist=track_data["artist"],
-                                album=track_data["album"],
-                                duration=duration
-                            )
-                            playlist.add_track(track)
-                        except (ValueError, KeyError) as e:
-                            print(f"Skipping invalid track data in playlist '{playlist_name}': {track_data} - Error: {e}")
-                    playlists.append(playlist)
-
-                return library, playlists
+            print(f"Music Library loaded successfully from {filename}")
         except FileNotFoundError:
-            print("Data file not found. Initializing new library and playlists.")
-            return MusicLibrary(), []
+            print(f"Error: The file {filename} was not found.")
         except json.JSONDecodeError:
-            print("Corrupted data file. Initializing new library and playlists.")
-            return MusicLibrary(), []    
+            print(f"Error: Failed to decode JSON in {filename}. The file might be corrupted.")
+        except Exception as e:
+            print(f"An error occurred while loading music data: {e}")
+
+    def save_queue(self, queue, filename="queues.json"):
+        """Save the current play queue to a file."""
+        try:
+            with open(filename, "w") as file:
+                existing_tracks = [
+                    {"title": track.title, "artist": track.artist, "duration": track.duration}
+                    for track in queue
+                ]
+                json.dump(existing_tracks, file, indent=4)
+            print("Queue saved successfully.")
+        except Exception as e:
+            print(f"Error saving queue: {e}")
+
+    def load_queue(self, filename="queues.json"):
+        """Load the current play queue from a file."""
+        try:
+            with open(filename, "r") as file:
+                tracks = json.load(file)
+            print("Queue loaded successfully.")
+            return [Track(track["title"], track["artist"], track["album"], track["duration"]) for track in tracks]
+        except (FileNotFoundError, json.JSONDecodeError):
+            print("Error loading queue. No saved queue found or file corrupted.")
+            return []
+
