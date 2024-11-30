@@ -4,15 +4,16 @@ from Playlist import Playlist
 from Track import Track
 
 class DataStorage:
-#MUSIC Library
+#MUSIC Library and Playlist
     #SAVE
-    def save_music_library(library):
+    def save_music(playlist_data,filename):
         try:
-            with open("MusicLibrary.json", 'w') as json_file:
-                json.dump(library, json_file, indent=4)
-            print(f"Music library saved to MusicLibrary.json")
+            with open(filename, 'w') as json_file:
+                json.dump(playlist_data, json_file, indent=4)  
+            print(f"Playlist saved successfully to {filename}")
         except Exception as e:
-            print(f"Error saving library: {e}")
+            print(f"Error saving playlist: {e}")
+
     #LOAD
     def load_music_library(self):
         try:
@@ -23,48 +24,5 @@ class DataStorage:
         except Exception as e:
             print(f"Error loading library: {e}")
 
-#Playlist
-    def save_playlist(playlist_data):
-        try:
-            with open("playlist.json", 'w') as json_file:
-                json.dump(playlist_data, json_file, indent=4)  
-            print(f"Playlist saved successfully to playlist.json")
-        except Exception as e:
-            print(f"Error saving playlist: {e}")
 
-#QUEUE
-    def save_queue(self):
-        try:
-            with open("queues.json", "r") as file:
-                existing_tracks = json.load(file)
-        except (FileNotFoundError, json.JSONDecodeError):
-            existing_tracks = []
-
-        current_tracks = [
-            {"title": track.title, "artist": track.artist, "duration": track.duration}
-            for track in self.list
-        ]
-        existing_tracks.extend(current_tracks)
-
-        with open("queues.json", "w") as file:
-            json.dump(existing_tracks, file, indent=4)
-
-        print("Queues saved.")
-
-    def load_queue(self):
-        try:
-            with open("queues.json", "r") as file:
-                tracks = json.load(file)
-
-            self.list = [
-                Track(track["title"], track["artist"], track["album"], track["duration"]) for track in tracks
-            ]
-            self.total_duration = sum(track["duration"] for track in tracks)
-            self.current_index = 0 if self.list else None
-            print("Queues loaded.")
-        except FileNotFoundError:
-            print("No saved queue found.")
-        except json.JSONDecodeError:
-            print("Error decoding JSON. Queue file might be corrupted.")
-
-
+    
