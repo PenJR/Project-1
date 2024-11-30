@@ -4,6 +4,14 @@ from Playlist import Playlist
 from Track import Track
 
 class DataStorage:
+#MUSIC Library
+    def save_music_library(library):
+        try:
+            with open("MusicLibrary.json", 'w') as json_file:
+                json.dump(library, json_file, indent=4)
+            print(f"Music library saved to MusicLibrary.json")
+        except Exception as e:
+            print(f"Error saving library: {e}")
 
 #QUEUE
     def save_queue(self):
