@@ -13,6 +13,10 @@ class Queue:
         self.current_index = None  # Initialize current_index
 
     def play(self):
+        if not self.list:
+            print("The queue is empty. Nothing to play.")
+            return 
+            
         if self.shuffle:
             shuffled_queue = random.sample(self.list, len(self.list))
             self.current_index = 0
