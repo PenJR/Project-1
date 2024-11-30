@@ -3,6 +3,7 @@ import json
 from Track import Track
 from Playlist import Playlist
 from Music_Library import MusicLibrary
+from Queue import Queue
 
 class DataStorage:
 #MUSIC Library and Playlist
@@ -90,6 +91,26 @@ class DataStorage:
       else:
         print(f"Playlist '{name}' not found in '{file_path}'.")
         return None
+
+#QUEUE
+
+    def save_queue(self):
+        try:
+            with open("queues.json", "r") as file:
+                existing_tracks = json.load(file)
+        except (FileNotFoundError, json.JSONDecodeError):
+            existing_tracks = []
+
+        current_tracks = [
+            {"title": track.title, "artist": track.artist, "duration": track.duration}
+            for track in self.list
+        ]
+        existing_tracks.extend(current_tracks)
+
+        with open("queues.json", "w") as file:
+            json.dump(existing_tracks, file, indent=4)
+
+        print("Queues saved.")
 
 
     
