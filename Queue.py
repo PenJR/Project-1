@@ -53,9 +53,24 @@ class Queue:
         print(f"Playing: {self.current}")
 
     def toggle_shuffle(self):
-        self.shuffle = not self.shuffle
         status = "On" if self.shuffle else "Off"
-        print(f"Shuffle is now {status}.")
+        if self.shuffle == False:
+            self.defaultlist = self.list[:]
+
+            self.shuffledlist = self.defaultlist[:]
+            random.shuffle(self.shuffledlist)
+
+            self.shuffle = True
+            self.current_index = 0 
+            print (f"Shuffle is {status}, Queue is Shuffled")
+            return self.shuffledlist
+
+        else:
+            self.shuffle = False
+            self.current_index = 0 
+            
+            print(f"Shuffle is {status}. The queue is back to its original order.")
+            return self.defaultlist
 
     def toggle_repeat(self):
         self.repeat = not self.repeat
