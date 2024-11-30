@@ -10,6 +10,7 @@ class Queue:
         self.repeat = False
         self.pagination = 10
         self.total_duration = 0
+        self.originalOrder = []
         self.current_index = None  # Initialize current_index
 
     def play(self):
