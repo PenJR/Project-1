@@ -1,6 +1,4 @@
-import json
 import random
-from Track import Track
 
 class Queue:
     def __init__(self):
@@ -56,7 +54,7 @@ class Queue:
 
     def toggle_shuffle(self):
         self.shuffle = not self.shuffle
-        status = "enabled" if self.shuffle else "disabled"
+        status = "On" if self.shuffle else "Off"
         print(f"Shuffle is now {status}.")
 
     def toggle_repeat(self):
