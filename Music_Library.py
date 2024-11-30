@@ -47,9 +47,10 @@ class MusicLibrary:
         artist = input("Enter artist: ")
         album = input("Enter album: ")
         duration = input("Enter duration (mm:ss): ")
+        additional_artist = input('Enter additional artist: ')
 
         try:
-            track = Track(title, artist, album, duration)
+            track = Track(title, artist, album, duration, additional_artist)
             library.add_track(track)
             return f"Track '{title}' added successfully!"
         except ValueError as e:
