@@ -1,9 +1,9 @@
 import json
-from Music_Library import MusicLibrary
-from Playlist import Playlist
-from Track import Track
-from Data_Storage import DataStorage
-import random
+# from Music_Library import MusicLibrary
+# from Playlist import Playlist
+# from Track import Track
+# from Data_Storage import DataStorage
+# import random
 
 # MENUS dictionary
 MENUS = {
@@ -13,7 +13,7 @@ MENUS = {
         3: "Playlists",
         4: "Exit"
     },
-    "Music Library": {
+    "Music_Library": {
         1: "Add Track",
         2: "View Tracks",
         3: "Search Tracks",
@@ -56,7 +56,6 @@ def main():
     while True:
         choice = show_menu("main")
         if choice == "1":
-            
             pass
         elif choice == "2":
             show_menu("Music Library")
