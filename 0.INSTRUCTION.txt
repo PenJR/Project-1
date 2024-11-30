@@ -17,40 +17,6 @@ Main Menu
       2. Playlist 
       3. Exit (Prompts the user to save his/her new progress: Y/N) #If Y it would save all progress especially the last played music.
 
-Option 0:
-Play Music
-	[1] Play 
-	[2] Next 
-	[3] Previous 
-	[4] Turn off repeat 
-	[5] Turn on shuffle 
-	[6] Clear queue 
-	[7] Exit 
-
-
-Option 1:
-Music Library
-      1: Add Track
-      2: View Tracks (Show All Track - able to update, delete)
-      3: Search Tracks (Specific Track - able to update, delete)
-	1. Track title 
-	2. Artist Name 
-	3. Album 
-	4. Duration 
-	5. Date and Time
-      4: Go back to main menu 
-
-Option 2:
-Playlist
-     1: Create Playlist
-     2: View Playlists
-     3: Add Track to Playlist
-     4: Go back to main menu
-
-
-
-
-
 
 
 Challenges:
