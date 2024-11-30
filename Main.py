@@ -44,6 +44,95 @@ MENUS = {
 # -----------------------------
 # Functions to manage playback and library
 # -----------------------------
+def get_total_duration(queue):
+    """Calculate the total duration of the tracks in the queue in mm:ss format."""
+    total_seconds = sum([track.duration_seconds() for track in queue])  # sum the raw seconds
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+    seconds = total_seconds % 60
+    return f"{hours:02}:{minutes:02}:{seconds:02}"
+
+def paginate_queue(queue, page_size=10):
+    """Paginate the queue into chunks of a specific size."""
+    return [queue[i:i + page_size] for i in range(0, len(queue), page_size)]
+
+def display_queue_page(queue, page_number, page_size=10):
+    """Display a specific page of the queue along with its total duration."""
+    pages = paginate_queue(queue, page_size)
+    if not pages:
+        print("The queue is empty.")
+        return
+    
+    if page_number < 1 or page_number > len(pages):
+        print("Invalid page number.")
+        return
+    
+    page = pages[page_number - 1]
+    print(f"\nDisplaying page {page_number}/{len(pages)}")
+    for idx, track in enumerate(page, start=(page_number - 1) * page_size + 1):
+        print(f"{idx}. {track.title} – {track.artist} ({track.album}) - {track.duration}")
+    
+    total_duration = get_total_duration(queue)
+    print(f"\nTotal Duration: {total_duration}")
+
+    return len(pages)
+
+def show_queue_navigation(queue):
+    """Navigate through the queue and display pages."""
+    page_number = 1
+    while True:
+        total_pages = display_queue_page(queue, page_number)
+        
+        if total_pages == 0:
+            break
+        
+        print("\nQueue Navigation:")
+        print(f"1. Next Page")
+        print(f"2. Previous Page")
+        print(f"3. Go Back to Main Menu")
+        
+        try:
+            choice = int(input("Enter your choice: "))
+            if choice == 1 and page_number < total_pages:
+                page_number += 1
+            elif choice == 2 and page_number > 1:
+                page_number -= 1
+            elif choice == 3:
+                break  # Go back to the main menu
+            else:
+                print("Invalid choice. Please try again.")
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
+        
+# Function to manage music player and include queue management
+def manage_play_music(library, queue):
+    current_track_index = 0
+    playing = False  # Ensure nothing plays until user selects what to play
+
+    while True:
+        show_music_player_options()
+        try:
+            choice = int(input("Enter your choice (1-7): "))
+            if choice == 1:  # Play
+                print("Resuming playback.")
+                break  # Resumes playback from the current selection
+            elif choice == 6:  # Clear Queue
+                queue.clear()
+                print("Queue has been cleared.")
+                playing = False
+                break  # Exit playback options
+            elif choice == 7:  # Exit
+                DataStorage.save(library, queue)
+                print("Queue saved successfully. Exiting player.")
+                break  # Exit the loop and program
+            else:
+                print("Invalid choice. Please try again.")
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
+
+    if playing:
+        show_queue_navigation(queue)  # Show the queue with pagination
+
 
 def get_total_duration(queue):
     """Calculate the total duration of the tracks in the queue in mm:ss format."""
