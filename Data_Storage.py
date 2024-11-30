@@ -23,6 +23,15 @@ class DataStorage:
         except Exception as e:
             print(f"Error loading library: {e}")
 
+#Playlist
+    def save_playlist(playlist_data):
+        try:
+            with open("playlist.json", 'w') as json_file:
+                json.dump(playlist_data, json_file, indent=4)  
+            print(f"Playlist saved successfully to playlist.json")
+        except Exception as e:
+            print(f"Error saving playlist: {e}")
+
 #QUEUE
     def save_queue(self):
         try:
