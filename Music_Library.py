@@ -4,7 +4,7 @@ class MusicLibrary:
     def __init__(self):
         self.tracks = []
     
-    def add_track(self, track):
+    def check_track(self, track):
         if self.duplicate(track):
             return "Track already exist."
         else:
@@ -51,7 +51,7 @@ class MusicLibrary:
 
         try:
             track = Track(title, artist, album, duration, additional_artist)
-            library.add_track(track)
+            library.check_track(track)
             return f"Track '{title}' added successfully!"
         except ValueError as e:
             return f"Error adding track: {e}"
