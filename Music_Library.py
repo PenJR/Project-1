@@ -23,7 +23,7 @@ class MusicLibrary:
         if not self.tracks:
             return('No tracks in the library.')
         else:
-            for i, track in enumerate(self.tracks):
+            for i, track in len(self.tracks):
                 return(f"[{i + 1}] {track}")
     
     def search_track(self, title):
@@ -34,7 +34,11 @@ class MusicLibrary:
         
     def validate_duration(self, duration):
         try:
-            mins, seconds = map(int, duration.split(':'))
+            parts = duration.split(':')
+            if len(parts) != 2:
+                return False
+            mins = int(parts[0])
+            seconds = int(parts[1])
             return mins >= 0 and 0 <= seconds < 60
         except ValueError:
             return False
