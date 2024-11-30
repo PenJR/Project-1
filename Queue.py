@@ -118,41 +118,4 @@ class Queue:
         print("Queues saved.")
 
 
-    def queue_menu(self):
-        while True:
-            print("\nQueue Menu:")
-            print("[1] Play")
-            print("[2] Skip")
-            print("[3] Previous")
-            print("[4] Toggle Repeat")
-            print("[5] Toggle Shuffle")
-            print("[6] Display Queue")
-            print("[7] Save Queue")
-            print("[8] Load Queue")
-            print("[9] Exit")
-
-            choice = input("Enter your choice: ")
-
-            if choice == "1":
-                self.play()
-            elif choice == "2":
-                self.skip()
-            elif choice == "3":
-                self.previous()
-            elif choice == "4":
-                self.toggle_repeat()
-            elif choice == "5":
-                self.toggle_shuffle()
-            elif choice == "6":
-                self.display_queue()
-            elif choice == "7":
-                DataStorage.save_queue()
-            elif choice == "8":
-                DataStorage.load_queue()
-            elif choice == "9":
-                print("Exiting queue interface.")
-                break
-            else:
-                print("Invalid choice. Please try again.")
-
 

@@ -3,61 +3,65 @@ from Track import Track
 class MusicLibrary:
     def __init__(self):
         self.tracks = []
-    
-    def check_track(self, track):
-        if self.duplicate(track):
-            return "Track already exist."
-        else:
+
+    def add_track(self, track):
+        """Adds a track to the library, ensuring no duplicates."""
+        if not self.duplicate(track):
             self.tracks.append(track)
-            self.tracks.sort(key=Track.sort)
+            self.sort_tracks()
+            print(f"Track '{track.title}' by {track.artist} added to the library.")
+        else:
+            print(f"Track '{track.title}' by {track.artist} already exists in the library.")
 
     def duplicate(self, new_track):
+        """Checks if the track already exists in the library."""
         for track in self.tracks:
-            if (track.title == new_track.title and
-                track.album == new_track.album and
-                track.artist == new_track.artist):
+            if (track.title.lower() == new_track.title.lower() and
+                track.album.lower() == new_track.album.lower() and
+                track.artist.lower() == new_track.artist.lower()):
                 return True
         return False
-     
+
+    def sort_tracks(self):
+        """Sort tracks in the library by artist, album, and title."""
+        def track_sort_key(track):
+            return (track.artist.lower(), track.album.lower(), track.title.lower())
+
+        self.tracks.sort(key=track_sort_key)
+
     def display_tracks(self):
+        """Displays all tracks in the library."""
         if not self.tracks:
-            return('No tracks in the library.')
+            print("No tracks in the library.")
         else:
-            for i, track in len(self.tracks):
-                return(f"[{i + 1}] {track}")
-    
+            print("Music Library:")
+            for i, track in enumerate(self.tracks, 1):
+                print(f"[{i}] {track.title} – {track.artist} ({track.album}, {track.duration})")
+
     def search_track(self, title):
-        if not title:
-            return []
+        """Search for a track by title."""
         matches = [track for track in self.tracks if title.lower() in track.title.lower()]
         if not matches:
-            print("No matching tracks found.")
+            print(f"No tracks found with title containing '{title}'.")
+        else:
+            print(f"Tracks matching '{title}':")
+            for track in matches:
+                print(f"- {track.title} by {track.artist} ({track.duration})")
         return matches
 
-    def validate_duration(self, duration):
-        try:
-            parts = duration.split(':')
-            if len(parts) != 2:
-                return False
-            mins = int(parts[0])
-            seconds = int(parts[1])
-            return mins >= 0 and 0 <= seconds < 60
-        except ValueError:
-            return False
+    def remove_track(self, title):
+        """Remove a track from the library by its title."""
+        for track in self.tracks:
+            if track.title.lower() == title.lower():
+                self.tracks.remove(track)
+                print(f"Track '{track.title}' by {track.artist} removed from the library.")
+                return
+        print(f"No track with the title '{title}' found in the library.")
 
-    def manage_add_track(library):
-        """ Handles operations related to the music library, including CRUD for Tracks.
-        """
-            # Add Track
-        title = input("Enter track title: ")
-        artist = input("Enter artist: ")
-        album = input("Enter album: ")
-        duration = input("Enter duration (mm:ss): ")
-        additional_artist = input('Enter additional artist: ')
-
-        try:
-            track = Track(title, artist, album, duration, additional_artist)
-            library.check_track(track)
-            return f"Track '{title}' added successfully!"
-        except ValueError as e:
-            return f"Error adding track: {e}"
+    def total_duration(self):
+        """Calculate and return the total duration of all tracks in the library."""
+        total_seconds = sum(track.duration_seconds() for track in self.tracks)
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+        seconds = total_seconds % 60
+        return f"{hours} hr {minutes} min {seconds} sec"
