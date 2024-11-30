@@ -5,7 +5,7 @@ from Track import Track
 
 class DataStorage:
 
-  def save_queue(self):
+    def save_queue(self):
         try:
             with open("queues.json", "r") as file:
                 existing_tracks = json.load(file)
