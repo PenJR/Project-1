@@ -1,14 +1,14 @@
 import json
-import json
 from Track import Track
 from Playlist import Playlist
 from Music_Library import MusicLibrary
 from Queue import Queue
 
 class DataStorage:
-#MUSIC Library and Playlist
-    #SAVE
-    def save_music(music_data,filename="MusicLibrary.json"):
+    # MUSIC Library and Playlist
+    # SAVE
+    @staticmethod
+    def save_music(music_data, filename="MusicLibrary.json"):
         try:
             with open(filename, 'w') as json_file:
                 json.dump(music_data, json_file, indent=4)  
@@ -16,10 +16,10 @@ class DataStorage:
         except Exception as e:
             print(f"Error saving playlist: {e}")
 
-    #LOAD
-    def load_music(filename = "MusicLibrary.json"):
+    # LOAD
+    @staticmethod
+    def load_music(filename="MusicLibrary.json"):
         try:
-          
             with open(filename, 'r') as json_file:
                 playlist_data = json.load(json_file)  
             print(f"Playlist loaded successfully from {filename}")
@@ -51,7 +51,6 @@ class DataStorage:
             ],
         }
 
-
         try:
             with open(file_path, "w") as f:
                 json.dump(data, f, indent=4)
@@ -61,38 +60,35 @@ class DataStorage:
 
     @staticmethod
     def load_playlist(name, file_path="MusicLibrary.json"):
-      """Load a playlist by name from a JSON file."""
-      try:
-        with open(file_path, "r") as f:
-            data = json.load(f)
-      except FileNotFoundError:
-        print(f"Error: The file '{file_path}' does not exist.")
-        return None
-      except json.JSONDecodeError:
-        print(f"Error: The file '{file_path}' contains invalid JSON.")
-        return None
+        """Load a playlist by name from a JSON file."""
+        try:
+            with open(file_path, "r") as f:
+                data = json.load(f)
+        except FileNotFoundError:
+            print(f"Error: The file '{file_path}' does not exist.")
+            return None
+        except json.JSONDecodeError:
+            print(f"Error: The file '{file_path}' contains invalid JSON.")
+            return None
 
+        if name in data:
+            playlist_data = data[name]
+            playlist = Playlist(playlist_data["Playlist Name"])
 
-      if name in data:
-        playlist_data = data[name]
-        playlist = Playlist(playlist_data["Playlist Name"])
+            playlist.tracks = [
+                Track.from_dict(track_data)
+                for track_data in playlist_data.get("Tracks", [])
+            ]
 
+            playlist.total_duration = playlist_data.get("Total Duration", 0)
 
-        playlist.tracks = [
-            Track.from_dict(track_data)
-            for track_data in playlist_data.get("Tracks", [])
-        ]
+            print(f"Playlist '{name}' loaded successfully.")
+            return playlist
+        else:
+            print(f"Playlist '{name}' not found in '{file_path}'.")
+            return None
 
-   
-        playlist.total_duration = playlist_data.get("Total Duration", 0)
-
-        print(f"Playlist '{name}' loaded successfully.")
-        return playlist
-      else:
-        print(f"Playlist '{name}' not found in '{file_path}'.")
-        return None
-
-#QUEUE
+    # QUEUE
 
     def save_queue(self):
         try:
@@ -128,30 +124,23 @@ class DataStorage:
         except json.JSONDecodeError:
             print("Error decoding JSON. Queue file might be corrupted.")   
 
-
-    def album_maker(track):
-        albums = {}
-
-        album_name = track.get('Album')
-        artist_name = track.get('Artist')
-
+    # Album maker function
+    @staticmethod
+    def album_maker(track, albums):
+        album_name = track.get("Album")
+        artist_name = track.get("Artist")
         if album_name and artist_name:
-
             album_key = (album_name, artist_name)
+            albums.setdefault(album_key, []).append(track)
 
-            if album_key not in albums:
-                albums[album_key] = [track]
-
-            else:
-                albums[album_key].append(track)
-
+    @staticmethod
     def save_albums(albums, filename="MusicLibrary.json"):
         with open(filename, 'w') as file:
             # Convert dictionary to a JSON-compatible format
             json.dump(albums, file, indent=4)
         print(f"Albums saved to {filename}.")
 
-
+    @staticmethod
     def load_albums(filename="MusicLibrary.json"):
         try:
             with open(filename, 'r') as file:
