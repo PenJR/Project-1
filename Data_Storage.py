@@ -112,5 +112,21 @@ class DataStorage:
 
         print("Queues saved.")
 
+    def load_queue(self):
+        try:
+            with open("queues.json", "r") as file:
+                tracks = json.load(file)
+
+            self.list = [
+                Track(track["title"], track["artist"], track["album"], track["duration"]) for track in tracks
+            ]
+            self.total_duration = sum(track["duration"] for track in tracks)
+            self.current_index = 0 if self.list else None
+            print("Queues loaded.")
+        except FileNotFoundError:
+            print("No saved queue found.")
+        except json.JSONDecodeError:
+            print("Error decoding JSON. Queue file might be corrupted.")   
+
 
     
