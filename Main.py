@@ -13,15 +13,6 @@ MENUS = {
         3: "Playlists",
         4: "Exit"
     },
-    "Music Player": {
-        1: "Play",
-        2: "Next",
-        3: "Previous",
-        4: "Toggle Repeat",
-        5: "Toggle Shuffle",
-        6: "Clear Queue",
-        7: "Exit"
-    },
     "Music Library": {
         1: "Add Track",
         2: "View Tracks",
