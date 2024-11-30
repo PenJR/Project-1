@@ -15,14 +15,19 @@ class DataStorage:
             print(f"Error saving playlist: {e}")
 
     #LOAD
-    def load_music_library(self):
+    def load_music(filename):
         try:
-            with open("MusicLibrary.json", 'r') as json_file:
-                library = json.load(json_file)
-            print(f"Music library loaded from {MusicLibrary.json}")
-            return library
-        except Exception as e:
-            print(f"Error loading library: {e}")
+          
+            with open(filename, 'r') as json_file:
+                playlist_data = json.load(json_file)  
+            print(f"Playlist loaded successfully from {filename}")
+            return playlist_data  
+        except FileNotFoundError:
+            print(f"Error: The file {filename} was not found.")
+            return None
+        except json.JSONDecodeError:
+            print(f"Error: Failed to decode JSON in playlist.json. It might be corrupted or not properly formatted.")
+
 
 
     
