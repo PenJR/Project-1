@@ -15,7 +15,6 @@ class Playlist(Track):
       except FileNotFoundError:
         data = {}
 
-
       data[self.name] = {
         "Playlist Name": self.name,
         "Total Duration": f"{self.total_duration[0]} min {self.total_duration[1]} sec",
@@ -52,6 +51,7 @@ class Playlist(Track):
         print(f"Error: The file '{file_path}' contains invalid JSON.")
         return None
 
+
       if name in data:
         playlist_data = data[name]
         playlist = Playlist(playlist_data["Playlist Name"])
@@ -62,6 +62,7 @@ class Playlist(Track):
             for track_data in playlist_data.get("Tracks", [])
         ]
 
+   
         playlist.total_duration = playlist_data.get("Total Duration", 0)
 
         print(f"Playlist '{name}' loaded successfully.")
