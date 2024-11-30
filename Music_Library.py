@@ -39,4 +39,18 @@ class MusicLibrary:
         except ValueError:
             return False
 
-    
+    def add_track(library):
+        """ Handles operations related to the music library, including CRUD for Tracks.
+        """
+            # Add Track
+        title = input("Enter track title: ")
+        artist = input("Enter artist: ")
+        album = input("Enter album: ")
+        duration = input("Enter duration (mm:ss): ")
+
+        try:
+            track = Track(title, artist, album, duration)
+            library.add_track(track)
+            return f"Track '{title}' added successfully!"
+        except ValueError as e:
+            return f"Error adding track: {e}"

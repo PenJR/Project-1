@@ -29,7 +29,7 @@ class DataStorage:
         except json.JSONDecodeError:
             print(f"Error: Failed to decode JSON in Music_Data.json, It might be corrupted or not properly formatted.")
 
-    def save_playlist(self, file_path="Playlist.json"):
+    def save_playlist(self, file_path="MusicLibrary.json"):
         try:
             with open(file_path, "r") as f:
                 data = json.load(f)
@@ -59,7 +59,7 @@ class DataStorage:
             print(f"Error saving playlist: {e}")
 
     @staticmethod
-    def load_playlist(name, file_path="Playlist.json"):
+    def load_playlist(name, file_path="MusicLibrary.json"):
       """Load a playlist by name from a JSON file."""
       try:
         with open(file_path, "r") as f:
