@@ -47,5 +47,32 @@ class DataStorage:
 
 
 
+                for playlist_name, track_data_list in data.get("Playlists", {}).items():
+                    playlist = Playlist(playlist_name)
+                    for track_data in track_data_list:
+                        try:
+                            # Ensure duration is in mm:ss format
+                            duration = track_data["duration"]
+                            if isinstance(duration, int):  # If duration is in seconds
+                                minutes = duration // 60
+                                seconds = duration % 60
+                                duration = f"{minutes:02}:{seconds:02}"
 
-    
+                            track = Track(
+                                title=track_data["title"],
+                                artist=track_data["artist"],
+                                album=track_data["album"],
+                                duration=duration
+                            )
+                            playlist.add_track(track)
+                        except (ValueError, KeyError) as e:
+                            print(f"Skipping invalid track data in playlist '{playlist_name}': {track_data} - Error: {e}")
+                    playlists.append(playlist)
+
+                return library, playlists
+        except FileNotFoundError:
+            print("Data file not found. Initializing new library and playlists.")
+            return MusicLibrary(), []
+        except json.JSONDecodeError:
+            print("Corrupted data file. Initializing new library and playlists.")
+            return MusicLibrary(), []    
