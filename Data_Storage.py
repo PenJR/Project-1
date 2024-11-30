@@ -4,37 +4,30 @@ from Playlist import Playlist
 from Track import Track
 
 class DataStorage:
-
-    def save_queue(self):
+#MUSIC Library and Playlist
+    #SAVE
+    def save_music(music_data,filename):
         try:
-            with open("queues.json", "r") as file:
-                existing_tracks = json.load(file)
-        except (FileNotFoundError, json.JSONDecodeError):
-            existing_tracks = []
+            with open(filename, 'w') as json_file:
+                json.dump(music_data, json_file, indent=4)  
+            print(f"Playlist saved successfully to {filename}")
+        except Exception as e:
+            print(f"Error saving playlist: {e}")
 
-        current_tracks = [
-            {"title": track.title, "artist": track.artist, "duration": track.duration}
-            for track in self.list
-        ]
-        existing_tracks.extend(current_tracks)
-
-        with open("queues.json", "w") as file:
-            json.dump(existing_tracks, file, indent=4)
-
-        print("Queues saved.")
-
-    def load_queue(self):
+    #LOAD
+    def load_music(filename):
         try:
-            with open("queues.json", "r") as file:
-                tracks = json.load(file)
-
-            self.list = [
-                Track(track["title"], track["artist"], track["album"], track["duration"]) for track in tracks
-            ]
-            self.total_duration = sum(track["duration"] for track in tracks)
-            self.current_index = 0 if self.list else None
-            print("Queues loaded.")
+          
+            with open(filename, 'r') as json_file:
+                playlist_data = json.load(json_file)  
+            print(f"Playlist loaded successfully from {filename}")
+            return playlist_data  
         except FileNotFoundError:
-            print("No saved queue found.")
+            print(f"Error: The file {filename} was not found.")
+            return None
         except json.JSONDecodeError:
-            print("Error decoding JSON. Queue file might be corrupted.")
+            print(f"Error: Failed to decode JSON in playlist.json. It might be corrupted or not properly formatted.")
+
+
+
+    
