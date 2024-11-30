@@ -42,6 +42,14 @@ class Playlist:
         else:
             print(f"No tracks found with title containing '{title}' in playlist '{self.name}'.")
 
+    def display_tracks(self):
+        if self.tracks:
+            print(f"\nTracks in '{self.name}':")
+            for i, track in enumerate(self.tracks, 1):
+                print(f"{i}. {track.title} by {track.artist} (Album: {track.album})")
+        else:
+            print(f"The playlist '{self.name}' has no tracks.")
+            
     def total_duration(self):
         """Calculate and return the total duration of the playlist."""
         total_seconds = sum(track.duration_seconds() for track in self.tracks)

@@ -178,6 +178,7 @@ def manage_play_music(library, queue):
                 print("Invalid choice. Please try again.")
         except ValueError:
             print("Invalid input. Please enter a valid number between 1 and 7.")
+
 def manage_music_library(library):
     """Handles operations related to the music library, including CRUD for Tracks."""
     while True:
@@ -204,7 +205,7 @@ def manage_music_library(library):
                 if 0 <= track_index < len(library.get_tracks()):
                     track = library.get_tracks()[track_index]
                     print(f"Selected Track: {track}")
-                    action_choice = input("1. Update  2. Delete  3. Discard: ")
+                    action_choice = input("1. Update  2. Delete  3. Play  4. Discard: ")
                     if action_choice == "1":
                         # Update Track
                         new_title = input(f"Enter new title (leave blank to keep '{track.title}'): ") or track.title
@@ -223,6 +224,9 @@ def manage_music_library(library):
                         # Delete Track
                         library.get_tracks().remove(track)
                         print(f"Track '{track.title}' deleted successfully!")
+                    elif action_choice == "3":
+                        # Play Track
+                        play_track(track)
                     else:
                         print("Changes discarded.")
                 else:
@@ -241,7 +245,7 @@ def manage_music_library(library):
                 if 0 <= track_index < len(results):
                     track = results[track_index]
                     print(f"Selected Track: {track}")
-                    action_choice = input("1. Update  2. Delete  3. Discard: ")
+                    action_choice = input("1. Update  2. Delete  3. Play  4. Discard: ")
                     if action_choice == "1":
                         # Update Track
                         new_title = input(f"Enter new title (leave blank to keep '{track.title}'): ") or track.title
@@ -260,6 +264,9 @@ def manage_music_library(library):
                         # Delete Track
                         library.get_tracks().remove(track)
                         print(f"Track '{track.title}' deleted successfully!")
+                    elif action_choice == "3":
+                        # Play Track
+                        play_track(track)
                     else:
                         print("Changes discarded.")
                 else:
@@ -271,6 +278,7 @@ def manage_music_library(library):
             break
         else:
             print("Invalid choice. Please try again.")
+
 
 def manage_playlists(library, playlists):
     """Handles operations related to playlists, including CRUD."""
@@ -290,27 +298,63 @@ def manage_playlists(library, playlists):
                 print("\nPlaylists:")
                 for i, playlist in enumerate(playlists, 1):
                     print(f"{i}. {playlist.name} ({len(playlist.tracks)} tracks)")
-                playlist_index = int(input("Enter playlist number to modify (0 to skip): ")) - 1
-                if 0 <= playlist_index < len(playlists):
-                    playlist = playlists[playlist_index]
-                    print(f"Selected Playlist: {playlist.name}")
-                    action_choice = input("1. Add Track  2. View Tracks  3. Discard: ")
-                    if action_choice == "1":
-                        track_title = input("Enter track title to add: ")
-                        track = library.search_track(track_title)
-                        if track:
-                            playlist.add_track(track[0])
-                            print(f"Track '{track[0].title}' added to playlist '{playlist.name}'!")
-                        else:
-                            print("Track not found.")
-                    elif action_choice == "2":
-                        playlist.display_tracks()
+
+                # Get and validate playlist selection
+                playlist_index = input("Enter playlist number to modify (0 to skip): ")
+                if playlist_index.isdigit() and int(playlist_index) > 0:
+                    playlist_index = int(playlist_index) - 1
+                    if 0 <= playlist_index < len(playlists):
+                        playlist = playlists[playlist_index]
+                        print(f"Selected Playlist: {playlist.name}")
+                        
+                        # Action menu for playlist
+                        while True:
+                            action_choice = input("1. Add Track  2. View Tracks  3. Play Playlist  4. Exit: ")
+                            
+                            if action_choice == "1":
+                                track_title = input("Enter track title to add: ")
+                                track = library.search_track(track_title)
+                                if track:
+                                    playlist.add_track(track[0])
+                                    print(f"Track '{track[0].title}' added to playlist '{playlist.name}'!")
+                                else:
+                                    print("Track not found.")
+                            
+                            elif action_choice == "2":
+                                playlist.display_tracks()
+                                play_choice = input("1. Play Playlist  2. Play a specific track: ")
+                                
+                                if play_choice == "1":
+                                    play_playlist(playlist)
+                                elif play_choice == "2":
+                                    try:
+                                        track_number = int(input(f"Select a track (1-{len(playlist.tracks)}): ")) - 1
+                                        if 0 <= track_number < len(playlist.tracks):
+                                            play_track(playlist.tracks[track_number])
+                                        else:
+                                            print("Invalid track number.")
+                                    except ValueError:
+                                        print("Invalid input. Please enter a valid number.")
+                                else:
+                                    print("Invalid option.")
+                            
+                            elif action_choice == "3":
+                                play_playlist(playlist)
+                            
+                            elif action_choice == "4":
+                                print("Exiting playlist options.")
+                                break  # Exit the while loop and go back to the previous menu
+                            
+                            else:
+                                print("Invalid option. Please try again.")
                     else:
-                        print("Changes discarded.")
+                        print("Invalid playlist number.")
                 else:
-                    print("Invalid playlist number.")
+                    print("No playlist selected or invalid number.")
             else:
                 print("No playlists available.")
+
+                        
 
         elif choice == "3":  # Add Track to Playlist
             playlist_name = input("Enter playlist name to add a track to: ")
@@ -330,7 +374,18 @@ def manage_playlists(library, playlists):
             break
         else:
             print("Invalid choice. Please try again.")
-            
+
+# Helper functions to play the track or playlist
+def play_track(track):
+    print(f"Now playing: {track.title} by {track.artist} from the album {track.album}.")
+
+def play_playlist(playlist):
+    print(f"Now playing the entire playlist: {playlist.name}.")
+    for track in playlist.tracks:
+        play_track(track)
+
+
+
 def show_menu(menu_name):
     """Show the appropriate menu based on the selected category."""
     options = MENUS.get(menu_name, {})
