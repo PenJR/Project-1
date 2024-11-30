@@ -26,3 +26,21 @@ MENUS = {
         4: "Go Back to Main Menu"
     }
 }
+
+def show_menu(menu_name):
+    """Displays a menu and gets user choice, ensuring input is valid."""
+    print(f"\n{menu_name} Menu:")
+    # Display all menu options with proper numbering
+    for key, value in MENUS[menu_name].items():
+        print(f"{key}. {value}")
+    
+    # Ensure the input is a valid menu option
+    while True:
+        try:
+            choice = int(input("Enter your choice: "))
+            if choice in MENUS[menu_name]:
+                return str(choice)  # Return the choice as a string, since inputs are compared as strings
+            else:
+                print("Invalid choice. Please enter a number corresponding to the menu options.")
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
