@@ -44,3 +44,34 @@ def show_menu(menu_name):
                 print("Invalid choice. Please enter a number corresponding to the menu options.")
         except ValueError:
             print("Invalid input. Please enter a valid number.")
+
+
+# Ensure the main menu, play music, library, and playlist menus work with this validation.
+
+
+def main():
+    """Main function to handle the program's execution flow."""
+
+    # Main menu loop
+    while True:
+        choice = show_menu("main")
+        if choice == "1":
+            
+            pass
+        elif choice == "2":
+            show_menu("Music Library")
+            pass
+        elif choice == "3":
+            show_menu("Playlist")
+            pass
+        elif choice == "4":
+            # Save data and exit
+            print("Program Terminated")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+# -----------------------------
+# RUN THE PROGRAM
+# -----------------------------
+main()
