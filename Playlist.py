@@ -1,12 +1,13 @@
 import json
 from Track import Track  
 from Queue import Queue
-class Playlist:
+class Playlist(Track):
     def __init__(self, name):
         """
         Initializes a playlist with a given name and a Queue object to manage tracks.
         """
         self.name = name
+        self.tracks = []
         self.queue = Queue()  # Instance of Queue to manage the tracks
         self.total_duration = 0  # Store the total duration as a single number (in seconds)
 
