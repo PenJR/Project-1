@@ -58,7 +58,7 @@ class Track:
         if not duration or ':' not in duration or len(duration.split(':')) !=2:
             return 'Invalid duration format. Please use mm:ss.'
         
-        additional_artist_input = input('Enter additional artist (Enter to Skip[]): ')
+        additional_artist_input = input('Enter additional artist (Press Enter to Skip): ')
         additional_artist = additional_artist_input.split if additional_artist_input.split() else None
 
         try:
