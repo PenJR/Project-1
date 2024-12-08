@@ -59,7 +59,8 @@ def manage_play_music(library, queue):
                 playing = False
                 break  # Exit playback options
             elif choice == 7:  # Exit
-                DataStorage.save(library, queue)
+                DataStorage.save_library(library)
+                queue.save_queue()
                 print("Queue saved successfully. Exiting player.")
                 break  # Exit the loop and program
             else:
@@ -162,13 +163,13 @@ def manage_play_music(library, queue):
                 playing = False
                 break  # Exit playback options
             elif choice == 7:  # Exit
-                DataStorage.save(library, queue)
+                queue.save_queue()
                 print("Queue saved successfully. Exiting player.")
                 break  # Exit the loop and program
             else:
                 print("Invalid choice. Please try again.")
         except ValueError:
-            print("Invalid input. Please enter a valid number between 1 and 7.")
+            print("Invalid input. 1Please enter a valid number between 1 and 7.")
 
 def manage_music_library(library):
     """Handles operations related to the music library, including CRUD for Tracks."""
@@ -176,139 +177,111 @@ def manage_music_library(library):
         choice = show_menu("Music Library")
         
         if choice == "1":  # Add Track
+            resultTrack = Track.create_track(library)
+            DataStorage.save_library(library)
+
             try:
-                resultTrack = Track.create_track(library)
-                print(f'{resultTrack} added successfully!')
+                print(resultTrack)
             except ValueError as e:
                 print(f"Error adding track: {e}")
-        elif choice == '4':
-            return show_menu('main')
 
         elif choice == "2":  # View all Tracks
-            tracks = library.get_tracks()
-            if tracks:
+            if library.get_tracks():
                 print("\nMusic Library:")
-                for i in range(1, len(tracks) + 1):
-                    print(f"{i}. {tracks[i - 1]}")
+                print(library.display_tracks())  # This should display the list of tracks
 
+                track_index = int(input("Enter track number to modify (0 to skip): ")) - 1
+                if 0 <= track_index < len(library.get_tracks()):
+                    track = library.get_tracks()[track_index]
+                    print(f"Selected Track: {track}")
+                    action_choice = input("1. Update  2. Delete  3. Play  4. Discard: ")
+                    if action_choice == "1":
+                        # Update Track
+                        new_title = input(f"Enter new title (leave blank to keep '{track.title}'): ") or track.title
+                        new_artist = input(f"Enter new artist (leave blank to keep '{track.artist}'): ") or track.artist
+                        new_album = input(f"Enter new album (leave blank to keep '{track.album}'): ") or track.album
+                        new_duration = input(f"Enter new duration (leave blank to keep '{track.duration}'): ") or track.duration
+
+                        # Update track details
+                        track.title = new_title
+                        track.artist = new_artist
+                        track.album = new_album
+                        track.duration = new_duration
+
+                        print(f"Track '{track.title}' updated successfully!")
+                    elif action_choice == "2":
+                        # Delete Track
+                        library.get_tracks().remove(track)
+                        print(f"Track '{track.title}' deleted successfully!")
+                    elif action_choice == "3":
+                        # Play Track
+                        play_track(track)
+                    else:
+                        print("Changes discarded.")
+                else:
+                    print("Invalid track number.")
             else:
                 print("The music library is empty.")
 
-            #     try:
-            #         track_index = int(input("Enter track number to modify (0 to skip): ")) - 1
-            #         if 0 <= track_index < len(library.get_tracks()):
-            #             track = library.get_tracks()[track_index]
-            #             print(f"Selected Track: {track}")
-            #             action_choice = input("1. Update  2. Delete  3. Play  4. Discard: ")
-            #             if action_choice == "1":
-            #                 # Update Track
-            #                 new_title = input(f"Enter new title (leave blank to keep '{track.title}'): ") or track.title
-            #                 new_artist = input(f"Enter new artist (leave blank to keep '{track.artist}'): ") or track.artist
-            #                 new_album = input(f"Enter new album (leave blank to keep '{track.album}'): ") or track.album
-            #                 new_duration = input(f"Enter new duration (leave blank to keep '{track.duration}'): ") or track.duration
-
-            #                 # Update track details
-            #                 track.title = new_title
-            #                 track.artist = new_artist
-            #                 track.album = new_album
-            #                 track.duration = new_duration
-
-            #                 print(f"Track '{track.title}' updated successfully!")
-            #             elif action_choice == "2":
-            #                 # Delete Track
-            #                 library.get_tracks().remove(track)
-            #                 print(f"Track '{track.title}' deleted successfully!")
-            #             elif action_choice == "3":
-            #                 # Play Track
-            #                 play_track(track)
-            #             else:
-            #                 print("Changes discarded.")
-            #         else:
-            #             print("Invalid track number.")
-
-            #     except ValueError:
-            #         print('Invalid inout. Please enter a valid number.')
-            # else:
-            #     print("The music library is empty.")
-
 
         elif choice == "3":  # Search Tracks
-            print('1. Search by Track Title\n2. Search by Artist Name\n3. Search by Album')
-            searchinput = input('Enter a number: ')
+            searchinput = input("1. Search by Track Title   2. Search by Artist Name   3. Search by Album: ")
 
             if searchinput == "1":
-                title = input("Enter track title to search: ").strip().lower()
-                # results = library.search_track(title)
-                results = [track for track in library.get_tracks() if title in track.title.lower()]
+                title = input("Enter track title to search: ")
+                results = library.search_track(title)
             elif searchinput == "2":
-                artist = input("Enter artist name to search: ").strip().lower()
-                # results = library.search_track(None,artist)
-                results = [track for track in library.get_tracks() if artist in track.artist.lower()]
+                artist = input("Enter artist name to search: ")
+                results = library.search_track(None,artist)
             elif searchinput == "3":
-                album = input("Enter track album to search: ").strip().lower()
-                # results = library.search_track(None,None,album)
-                results = [track for track in library.get_tracks() if album in track.album.lower()]
+                album = input("Enter track album to search: ")
+                results = library.search_track(None,None,album)
             else:
                 print("Invalid choice. Please select a valid option.")
-                # results = []
-                return # Exit early for invalid input
+                results = []
 
-            # Display results if found
             if results:
                 print("\nSearch Results:")
-                for i in range(1, len(results) + 1):
-                    print(f'{i}. {results[i-1]}')
+                for i, track in enumerate(results, 1):
+                    print(f"{i}. {track}")
                 
                 try:
-                    user = input('Do you want to modify a track? (Yes/No): ')
-                    if user.lower() == 'yes':
-                        track_index = int(input("Enter track number to modify (0 to skip): ")) - 1
-                        if 0 <= track_index < len(results): # Check if the track_index is within the valid range
-                            track = results[track_index]
-                            print(f"Selected Track: {track}")
-                            modify_track(track, library)
-                        else:
-                            print("Invalid track number. Please select a valid track.")
-                    elif user.lower() == 'no':
-                        print("No modifications were made.")
-                    else:
-                        print("Invalid input.")
-                except ValueError:
-                    print("Invalid input. Please enter a valid track number.")
-            else:
-                print("No tracks found with the given criteria.")
-
-def modify_track(track, library):
-    print('1. Update  2. Delete  3. Play  4. Discard')
-    action_choice = input("Enter a number: ")                     
+                    track_index = int(input("Enter track number to modify (0 to skip): ")) - 1
                     
-    # Update Track                        
-    if action_choice == "1":
-        new_title = input(f"Enter new title (leave blank to keep '{track.title}'): ") or track.title
-        new_artist = input(f"Enter new artist (leave blank to keep '{track.artist}'): ") or track.artist
-        new_album = input(f"Enter new album (leave blank to keep '{track.album}'): ") or track.album
-        new_duration = input(f"Enter new duration (leave blank to keep '{track.duration}'): ") or track.duration                    
+                    # Check if the track_index is within the valid range
+                    track = results[track_index]
+                    print(f"Selected Track: {track}")
+                    
+                    action_choice = input("1. Update  2. Delete  3. Play  4. Discard: ")
+                    if action_choice == "1":
+                        # Update Track
+                        new_title = input(f"Enter new title (leave blank to keep '{track.title}'): ") or track.title
+                        new_artist = input(f"Enter new artist (leave blank to keep '{track.artist}'): ") or track.artist
+                        new_album = input(f"Enter new album (leave blank to keep '{track.album}'): ") or track.album
+                        new_duration = input(f"Enter new duration (leave blank to keep '{track.duration}'): ") or track.duration
 
-        # Update track details
-        track.title = new_title
-        track.artist = new_artist
-        track.album = new_album
-        track.duration = new_duration
-        print(f"Track '{track.title}' updated successfully!")
+                        # Update track details
+                        track.title = new_title
+                        track.artist = new_artist
+                        track.album = new_album
+                        track.duration = new_duration
 
-    # Delete Track
-    elif action_choice == "2":
-        library.get_tracks().remove(track)
-        print(f"Track '{track.title}' deleted successfully!")
-    # Play Track
-    elif action_choice == "3":
-        play_track(track)
-    #Discard changes
-    elif action_choice == '4':
-        print('No changes were made.')
-        
-    else:
-        print('Invalid choice. Please enter a valid option.')
+                        print(f"Track '{track.title}' updated successfully!")
+                    elif action_choice == "2":
+                        # Delete Track
+                        library.get_tracks().remove(track)
+                        print(f"Track '{track.title}' deleted successfully!")
+                    elif action_choice == "3":
+                        # Play Track
+                        play_track(track)
+                    else:
+                        print("Changes discarded.")
+                    
+                except (ValueError, IndexError):
+                    print("Invalid track number. Please enter a valid number from the search results.")
+            else:
+                print("No tracks found with that search criteria.")
+
 
 
 def manage_playlists(library, playlists):
@@ -322,6 +295,7 @@ def manage_playlists(library, playlists):
                 print("A playlist with that name already exists.")
             else:
                 playlists.append(Playlist(name))
+                DataStorage.save_playlists(playlists)
                 print(f"Playlist '{name}' created successfully!")
 
         elif choice == "2":  # View all Playlists
@@ -458,7 +432,8 @@ def show_menu(menu_name):
 def main():
     """Main function to handle the program's execution flow."""
     # Load existing data
-    library, playlists = DataStorage.load()
+    playlists = DataStorage.load_playlists()
+    library = DataStorage.load_library()
 
     # Main menu loop
     while True:
@@ -481,7 +456,8 @@ def main():
             manage_playlists(library, playlists)
         elif choice == 4:
             # Save data and exit
-            DataStorage.save(library, playlists)
+            DataStorage.save_library(library, playlists)
+            DataStorage.save_playlists(playlists)
             print("Data saved. Goodbye!")
             break
         else:
