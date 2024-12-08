@@ -108,60 +108,25 @@ def show_playback_options():
 
 def manage_play_music(library, queue):
     current_track_index = 0
-    playing = False  # Ensure nothing plays until user selects what to play
+    playing = False  # Ensure nothing plays until tracks are queued
 
-    # Prompt user to choose what to play first
-    while True:
-        show_playback_options()
-        try:
-            choice = int(input("Enter your choice (1-4): "))
-            if choice not in [1, 2, 3, 4]:
-                print("Invalid choice. Please select a valid option (1-4).")
-                continue
-        except ValueError:
-            print("Invalid input. Please enter a number between 1 and 4.")
-            continue
+    # Directly load the queue with all tracks or based on a predefined selection
+    # For example, here I will queue all tracks from the library:
+    selected_tracks = library.get_tracks()
 
-        # Based on the user choice, play by Track Title, Artist Name, or Album
-        if choice == 1:  # Play by Track Title
-            track_title = input("Enter track title: ").strip().lower()
-            selected_tracks = [track for track in library.get_tracks() if track_title in track.title.lower()]
-            if selected_tracks:
-                queue.clear()
-                queue.extend(selected_tracks)
-                current_track_index = 0
-                playing = True
-                print(f"Playing all tracks matching '{track_title}'.")
-            else:
-                print(f"No tracks found with title containing '{track_title}'.")
-        elif choice == 2:  # Play by Artist Name
-            artist_name = input("Enter artist name: ").strip().lower()
-            selected_tracks = [track for track in library.get_tracks() if artist_name in track.artist.lower()]
-            if selected_tracks:
-                queue.clear()
-                queue.extend(selected_tracks)
-                current_track_index = 0
-                playing = True
-                print(f"Playing all tracks by artist '{artist_name}'.")
-            else:
-                print(f"No tracks found by artist '{artist_name}'.")
-        elif choice == 3:  # Play by Album
-            album_name = input("Enter album name: ").strip().lower()
-            selected_tracks = [track for track in library.get_tracks() if album_name in track.album.lower()]
-            if selected_tracks:
-                queue.clear()
-                queue.extend(selected_tracks)
-                current_track_index = 0
-                playing = True
-                print(f"Playing all tracks from album '{album_name}'.")
-            else:
-                print(f"No tracks found in album '{album_name}'.")
-        elif choice == 4:  # Exit to previous menu
-            print("Going back to the previous menu...")
-            return  # Return to the previous menu when the user selects option 4
+    if selected_tracks:
+        queue.clear()
+        queue.extend(selected_tracks)
+        current_track_index = 0
+        playing = True
+        print(f"Loaded {len(selected_tracks)} tracks into the queue.")
+    else:
+        print("No tracks found in the library.")
 
-        if playing:
-            break  # Exit the loop once music is selected and queued
+    # Now that the queue is loaded, we begin playing
+    if playing:
+        print("Playing music from the queue.")
+        # Logic to start playing from queue (assumed to be elsewhere)
 
 
     # Now show the music player options and manage playback
