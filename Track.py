@@ -17,23 +17,67 @@ class Track:
             [additional_artist] if isinstance(additional_artist, str) else additional_artist or []
         )
 
-    def get_duration_seconds(self):
-        """Returns the duration of the track in seconds."""
-        try:
-            mins, secs = map(int, self.duration.split(':'))
-            return mins * 60 + secs
-        except ValueError:
-            raise ValueError(f"Invalid duration format: '{self.duration}'. Expected 'mm:ss'.")
+    def getTitle(self):
+        return self.title
+    
+    def getArtist(self):
+        return self.artist
+    
+    def getAlbum(self):
+        return self.album
+    
+    def getDuration(self):
+        return self.duration
+    
+    def getAdditionalArtist(self):
+        return self.additional_artist
+        
+    def getDuration(self):
+        #returns the duration of the track in seconds.
+        mins, seconds = int(self.duration.split(':')[0]), int(self.duration.split(':')[1])
+        return mins * 60 + seconds
+
+    def getDurationstr(self):
+        #returns the duration of the track as a formatted string (mm:ss).
+        total_seconds = self.getDuration()
+        mins = total_seconds // 60
+        seconds = total_seconds % 60
+        return f'{mins:02}:{seconds:02}'
 
     def sort_key(self):
         """Sorting key for tracks by title, artist, album, and duration."""
-        return self.title.lower(), self.artist.lower(), self.album.lower(), self.get_duration_seconds()
+        return self.title.lower(), self.artist.lower(), self.album.lower(), self.duration
+    
+    @staticmethod
+    def create_track(library):
+        #creates track and added it to the library
+        title = input('Enter track title: ')
+        artist = input('Enter artist: ')
+        album = input('Enter album: ')
+        duration = input('Enter duration (mm:ss): ')
+        if not duration or ':' not in duration or len(duration.split(':')) !=2:
+            return 'Invalid duration format. Please use mm:ss.'
+        
+        additional_artist_input = input('Enter additional artist (Enter to Skip[]): ')
+        additional_artist = additional_artist_input.split if additional_artist_input.split() else None
+
+        try:
+            track = Track(title, artist, album, duration, additional_artist)
+            library.add_track(track)
+            return f'Track {title} by {artist}'
+        except ValueError as e:
+            return f'Error adding track: {e}'
 
     def __str__(self):
-        """String representation of the track."""
-        additional = ", ".join(self.additional_artist) if self.additional_artist else "None"
-        return (f"Title: {self.title}, Artist: {self.artist}, Album: {self.album}, "
-                f"Duration: {self.duration}, Additional Artists: {additional}")
+    # Check if additional artists exist, then format accordingly
+        if self.additional_artist:
+            additional = ", ".join(self.additional_artist)
+            return (f"Title: {self.title}, Artist: {self.artist} feat. {additional}, "
+                    f"Album: {self.album}, Duration: {self.duration}")
+        else:
+            return (f"Title: {self.title}, Artist: {self.artist}, "
+                    f"Album: {self.album}, Duration: {self.duration}")
+
 
     def __eq__(self, other):
         """Equality comparison based on title, artist, album, and duration."""
@@ -44,4 +88,5 @@ class Track:
     def __hash__(self):
         """Hashing method to allow using Track objects in sets and dictionaries."""
         return hash(self.sort_key())
-
+    
+    
